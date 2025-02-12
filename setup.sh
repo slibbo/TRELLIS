@@ -73,7 +73,8 @@ fi
 # Get system information
 WORKDIR=$(pwd)
 PYTORCH_VERSION=$(python -c "import torch; print(torch.__version__)")
-PLATFORM=$(python -c "import torch; print(('cuda' if torch.version.cuda else ('hip' if torch.version.hip else 'unknown')) if torch.cuda.is_available() else 'cpu')")
+#PLATFORM=$(python -c "import torch; print(('cuda' if torch.version.cuda else ('hip' if torch.version.hip else 'unknown')) if torch.cuda.is_available() else 'cpu')")
+PLATFORM=hip
 case $PLATFORM in
     cuda)
         CUDA_VERSION=$(python -c "import torch; print(torch.version.cuda)")
@@ -85,14 +86,14 @@ case $PLATFORM in
         HIP_VERSION=$(python -c "import torch; print(torch.version.hip)")
         HIP_MAJOR_VERSION=$(echo $HIP_VERSION | cut -d'.' -f1)
         HIP_MINOR_VERSION=$(echo $HIP_VERSION | cut -d'.' -f2)
-        # Install pytorch 2.4.1 for hip
-        if [ "$PYTORCH_VERSION" != "2.4.1+rocm6.1" ] ; then
-        echo "[SYSTEM] Installing PyTorch 2.4.1 for HIP ($PYTORCH_VERSION -> 2.4.1+rocm6.1)"
-            pip install torch==2.4.1 torchvision==0.19.1 --index-url https://download.pytorch.org/whl/rocm6.1 --user
+        # Install pytorch 2.6.0 for hip
+        if [ "$PYTORCH_VERSION" != "2.6.0+rocm6.2.4" ] ; then
+        echo "[SYSTEM] Installing PyTorch 2.6.0 for HIP ($PYTORCH_VERSION -> 2.6.0+rocm6.2.4)"
+            pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/rocm6.2.4
             mkdir -p /tmp/extensions
-            sudo cp /opt/rocm/share/amd_smi /tmp/extensions/amd_smi -r
+            cp /opt/rocm/share/amd_smi /tmp/extensions/amd_smi -r
             cd /tmp/extensions/amd_smi
-            sudo chmod -R 777 .
+            chmod -R 777 .
             pip install .
             cd $WORKDIR
             PYTORCH_VERSION=$(python -c "import torch; print(torch.__version__)")
@@ -149,10 +150,11 @@ if [ "$XFORMERS" = true ] ; then
             echo "[XFORMERS] Unsupported CUDA version: $CUDA_MAJOR_VERSION"
         fi
     elif [ "$PLATFORM" = "hip" ] ; then
-        case $PYTORCH_VERSION in
-            2.4.1\+rocm6.1) pip install xformers==0.0.28 --index-url https://download.pytorch.org/whl/rocm6.1 ;;
-            *) echo "[XFORMERS] Unsupported PyTorch version: $PYTORCH_VERSION" ;;
-        esac
+        #case $PYTORCH_VERSION in
+        #    2.4.1\+rocm6.1) pip install xformers==0.0.28 --index-url https://download.pytorch.org/whl/rocm6.1 ;;
+        #    *) echo "[XFORMERS] Unsupported PyTorch version: $PYTORCH_VERSION" ;;
+        #esac
+        pip install -U xformers --index-url https://download.pytorch.org/whl/rocm6.2.4
     else
         echo "[XFORMERS] Unsupported platform: $PLATFORM"
     fi
@@ -166,8 +168,8 @@ if [ "$FLASHATTN" = true ] ; then
         mkdir -p /tmp/extensions
         git clone --recursive https://github.com/ROCm/flash-attention.git /tmp/extensions/flash-attention
         cd /tmp/extensions/flash-attention
-        git checkout tags/v2.6.3-cktile
-        GPU_ARCHS=gfx942 python setup.py install #MI300 series
+        git checkout tags/v2.7.3-cktile
+        GPU_ARCHS=gfx1100 python setup.py install
         cd $WORKDIR
     else
         echo "[FLASHATTN] Unsupported platform: $PLATFORM"
@@ -187,6 +189,10 @@ if [ "$KAOLIN" = true ] ; then
             2.4.0) pip install kaolin -f https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.4.0_cu121.html;;
             *) echo "[KAOLIN] Unsupported PyTorch version: $PYTORCH_VERSION" ;;
         esac
+    elif [ "$PLATFORM" = "hip" ] ; then
+        mkdir -p /tmp/extensions
+        git clone https://github.com/slibbo/kaolin.git /tmp/extensions/kaolin
+        PYTORCH_ROCM_ARCH=gfx1100 pip install /tmp/extensions/kaolin
     else
         echo "[KAOLIN] Unsupported platform: $PLATFORM"
     fi
@@ -194,6 +200,10 @@ fi
 
 if [ "$NVDIFFRAST" = true ] ; then
     if [ "$PLATFORM" = "cuda" ] ; then
+        mkdir -p /tmp/extensions
+        git clone https://github.com/NVlabs/nvdiffrast.git /tmp/extensions/nvdiffrast
+        pip install /tmp/extensions/nvdiffrast
+    elif [ "$PLATFORM" = "hip" ] ; then
         mkdir -p /tmp/extensions
         git clone https://github.com/NVlabs/nvdiffrast.git /tmp/extensions/nvdiffrast
         pip install /tmp/extensions/nvdiffrast
@@ -206,6 +216,10 @@ if [ "$DIFFOCTREERAST" = true ] ; then
     if [ "$PLATFORM" = "cuda" ] ; then
         mkdir -p /tmp/extensions
         git clone --recurse-submodules https://github.com/JeffreyXiang/diffoctreerast.git /tmp/extensions/diffoctreerast
+        pip install /tmp/extensions/diffoctreerast
+    elif [ "$PLATFORM" = "hip" ] ; then
+        mkdir -p /tmp/extensions
+        git clone --recurse-submodules https://github.com/slibbo/diffoctreerast.git /tmp/extensions/diffoctreerast
         pip install /tmp/extensions/diffoctreerast
     else
         echo "[DIFFOCTREERAST] Unsupported platform: $PLATFORM"
