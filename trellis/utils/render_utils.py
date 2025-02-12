@@ -4,7 +4,8 @@ from tqdm import tqdm
 import utils3d
 from PIL import Image
 
-from ..renderers import OctreeRenderer, GaussianRenderer, MeshRenderer
+# from ..renderers import OctreeRenderer, GaussianRenderer, MeshRenderer
+from ..renderers import OctreeRenderer, MeshRenderer
 from ..representations import Octree, Gaussian, MeshExtractResult
 from ..modules import sparse as sp
 from .random_utils import sphere_hammersley_sequence
@@ -49,15 +50,15 @@ def render_frames(sample, extrinsics, intrinsics, options={}, colors_overwrite=N
         renderer.rendering_options.bg_color = options.get('bg_color', (0, 0, 0))
         renderer.rendering_options.ssaa = options.get('ssaa', 4)
         renderer.pipe.primitive = sample.primitive
-    elif isinstance(sample, Gaussian):
-        renderer = GaussianRenderer()
-        renderer.rendering_options.resolution = options.get('resolution', 512)
-        renderer.rendering_options.near = options.get('near', 0.8)
-        renderer.rendering_options.far = options.get('far', 1.6)
-        renderer.rendering_options.bg_color = options.get('bg_color', (0, 0, 0))
-        renderer.rendering_options.ssaa = options.get('ssaa', 1)
-        renderer.pipe.kernel_size = kwargs.get('kernel_size', 0.1)
-        renderer.pipe.use_mip_gaussian = True
+    # elif isinstance(sample, Gaussian):
+    #     renderer = GaussianRenderer()
+    #     renderer.rendering_options.resolution = options.get('resolution', 512)
+    #     renderer.rendering_options.near = options.get('near', 0.8)
+    #     renderer.rendering_options.far = options.get('far', 1.6)
+    #     renderer.rendering_options.bg_color = options.get('bg_color', (0, 0, 0))
+    #     renderer.rendering_options.ssaa = options.get('ssaa', 1)
+    #     renderer.pipe.kernel_size = kwargs.get('kernel_size', 0.1)
+    #     renderer.pipe.use_mip_gaussian = True
     elif isinstance(sample, MeshExtractResult):
         renderer = MeshRenderer()
         renderer.rendering_options.resolution = options.get('resolution', 512)

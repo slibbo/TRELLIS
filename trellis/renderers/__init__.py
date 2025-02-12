@@ -2,7 +2,7 @@ import importlib
 
 __attributes = {
     'OctreeRenderer': 'octree_renderer',
-    'GaussianRenderer': 'gaussian_render',
+    # 'GaussianRenderer': 'gaussian_render',
     'MeshRenderer': 'mesh_renderer',
 }
 
@@ -27,5 +27,5 @@ def __getattr__(name):
 # For Pylance
 if __name__ == '__main__':
     from .octree_renderer import OctreeRenderer
-    from .gaussian_render import GaussianRenderer
+    # from .gaussian_render import GaussianRenderer
     from .mesh_renderer import MeshRenderer

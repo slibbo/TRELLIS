@@ -231,6 +231,8 @@ if [ "$MIPGAUSSIAN" = true ] ; then
         mkdir -p /tmp/extensions
         git clone https://github.com/autonomousvision/mip-splatting.git /tmp/extensions/mip-splatting
         pip install /tmp/extensions/mip-splatting/submodules/diff-gaussian-rasterization/
+    elif [ "$PLATFORM" = "hip" ] ; then
+        echo "[MIPGAUSSIAN] Removed so not needed"
     else
         echo "[MIPGAUSSIAN] Unsupported platform: $PLATFORM"
     fi

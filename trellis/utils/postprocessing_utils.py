@@ -14,7 +14,7 @@ import cv2
 from PIL import Image
 from .random_utils import sphere_hammersley_sequence
 from .render_utils import render_multiview
-from ..renderers import GaussianRenderer
+# from ..renderers import GaussianRenderer
 from ..representations import Strivec, Gaussian, MeshExtractResult
 
 
@@ -485,13 +485,14 @@ def simplify_gs(
     observations = [torch.tensor(obs / 255.0).float().cuda().permute(2, 0, 1) for obs in observations]
     
     # Following https://arxiv.org/pdf/2411.06019
-    renderer = GaussianRenderer({
-            "resolution": 1024,
-            "near": 0.8,
-            "far": 1.6,
-            "ssaa": 1,
-            "bg_color": (0,0,0),
-        })
+    # renderer = GaussianRenderer({
+    #         "resolution": 1024,
+    #         "near": 0.8,
+    #         "far": 1.6,
+    #         "ssaa": 1,
+    #         "bg_color": (0,0,0),
+    #     })
+    renderer = None
     new_gs = Gaussian(**gs.init_params)
     new_gs._features_dc = gs._features_dc.clone()
     new_gs._features_rest = gs._features_rest.clone() if gs._features_rest is not None else None
