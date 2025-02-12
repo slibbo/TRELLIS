@@ -154,7 +154,16 @@ if [ "$XFORMERS" = true ] ; then
         #    2.4.1\+rocm6.1) pip install xformers==0.0.28 --index-url https://download.pytorch.org/whl/rocm6.1 ;;
         #    *) echo "[XFORMERS] Unsupported PyTorch version: $PYTORCH_VERSION" ;;
         #esac
-        pip install -U xformers --index-url https://download.pytorch.org/whl/rocm6.2.4
+        # pip install -U xformers --index-url https://download.pytorch.org/whl/rocm6.2.4
+        # As this uses flash-attn, try installing that first, which will install the triton backend
+        mkdir -p /tmp/extensions
+        git clone --recurse-submodules https://github.com/facebookresearch/xformers.git /tmp/extensions/xformers
+        cd /tmp/extensions/xformers
+        export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
+        export PYTORCH_ROCM_ARCH=gfx1100
+        export GPU_TARGETS="gfx1100"
+        pip install --verbose .
+        cd $WORKDIR
     else
         echo "[XFORMERS] Unsupported platform: $PLATFORM"
     fi
