@@ -10,6 +10,17 @@
 
 ***Check out our [Project Page](https://trellis3d.github.io) for more videos and interactive demos!***
 
+## ❗ Note On Fork
+
+I don't know what I'm doing, but hopefully this runs on AMD GPUs now.
+
+Please run with the flag `FLASH_ATTENTION_TRITON_AMD_ENABLE` set to `"TRUE"`.
+
+```
+export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
+python app.py
+```
+
 <!-- Features -->
 ## 🌟 Features
 - **High Quality**: It produces diverse 3D assets at high quality with intricate shape and texture details.

@@ -166,10 +166,22 @@ if [ "$FLASHATTN" = true ] ; then
     elif [ "$PLATFORM" = "hip" ] ; then
         echo "[FLASHATTN] Prebuilt binaries not found. Building from source..."
         mkdir -p /tmp/extensions
-        git clone --recursive https://github.com/ROCm/flash-attention.git /tmp/extensions/flash-attention
+
+        # git clone --recursive https://github.com/ROCm/flash-attention.git /tmp/extensions/flash-attention
+        # cd /tmp/extensions/flash-attention
+        # git checkout tags/v2.7.3-cktile
+        # GPU_ARCHS=gfx1100 python setup.py install
+
+        git clone https://github.com/triton-lang/triton /tmp/extensions/triton
+        cd /tmp/extensions/triton
+        git checkout 3ca2f498e98ed7249b82722587c511a5610e00c4
+        pip install --verbose python
+
+        git clone https://github.com/Dao-AILab/flash-attention.git /tmp/extensions/flash-attention
         cd /tmp/extensions/flash-attention
-        git checkout tags/v2.7.3-cktile
-        GPU_ARCHS=gfx1100 python setup.py install
+        export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
+        python setup.py install
+
         cd $WORKDIR
     else
         echo "[FLASHATTN] Unsupported platform: $PLATFORM"
