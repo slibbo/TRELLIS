@@ -260,6 +260,8 @@ if [ "$SPCONV" = true ] ; then
             12) pip install spconv-cu120 ;;
             *) echo "[SPCONV] Unsupported PyTorch CUDA version: $CUDA_MAJOR_VERSION" ;;
         esac
+    elif [ "$PLATFORM" = "hip" ] ; then
+        pip install spconv
     else
         echo "[SPCONV] Unsupported platform: $PLATFORM"
     fi
