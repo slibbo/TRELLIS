@@ -1,8 +1,8 @@
-#include <cuda.h>
-#include <cuda_runtime.h>
-// #include <device_launch_parameters.h>
+#include <hip/hip_runtime.h>
 
-#include <cooperative_groups.h>
+
+
+#include <hip/hip_cooperative_groups.h>
 // #include <cooperative_groups/memcpy_async.h>
 namespace cg = cooperative_groups;
 

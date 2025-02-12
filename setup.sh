@@ -243,6 +243,10 @@ if [ "$VOX2SEQ" = true ] ; then
         mkdir -p /tmp/extensions
         cp -r extensions/vox2seq /tmp/extensions/vox2seq
         pip install /tmp/extensions/vox2seq
+    elif [ "$PLATFORM" = "hip" ] ; then
+        mkdir -p /tmp/extensions
+        cp -r extensions/vox2seq /tmp/extensions/vox2seq
+        pip install --verbose /tmp/extensions/vox2seq
     else
         echo "[VOX2SEQ] Unsupported platform: $PLATFORM"
     fi

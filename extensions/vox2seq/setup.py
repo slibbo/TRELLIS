@@ -21,9 +21,9 @@ setup(
         CUDAExtension(
             name="vox2seq._C",
             sources=[
-                "src/api.cu",
-                "src/z_order.cu",
-                "src/hilbert.cu",
+                "src/api.cu.hip",
+                "src/z_order.cu.hip",
+                "src/hilbert.cu.hip",
                 "src/ext.cpp",
             ],
         )
