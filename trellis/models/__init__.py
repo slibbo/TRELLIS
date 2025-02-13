@@ -57,7 +57,24 @@ def from_pretrained(path: str, **kwargs):
     with open(config_file, 'r') as f:
         config = json.load(f)
     model = __getattr__(config['name'])(**config['args'], **kwargs)
-    model.load_state_dict(load_file(model_file))
+    # model.load_state_dict(load_file(model_file))
+    state_dict = load_file(model_file)
+
+    new_state_dict = {}
+    for k, v in state_dict.items():
+        if k in ["upsample.0.out_layers.0.conv.weight", "upsample.0.out_layers.3.conv.weight", "upsample.0.skip_connection.conv.weight", "upsample.1.out_layers.0.conv.weight", "upsample.1.out_layers.3.conv.weight", "upsample.1.skip_connection.conv.weight", "input_blocks.0.conv1.conv.weight", "input_blocks.0.conv2.conv.weight", "input_blocks.1.conv1.conv.weight", "input_blocks.1.conv2.conv.weight", "out_blocks.0.conv1.conv.weight", "out_blocks.0.conv2.conv.weight", "out_blocks.1.conv1.conv.weight", "out_blocks.1.conv2.conv.weight"]:
+            new_k = k.replace('.weight', '.kernel')
+            *_, out_c, _, _, _, in_c = v.shape  # Extract dimensions
+            if 'skip_connection' in k:
+                new_v = v.squeeze().t() # squeeze removes the singleton dimensions
+            else:
+                new_v = v.view(out_c, -1, in_c).permute(1, 2, 0).contiguous()
+        else:
+            new_k = k
+            new_v = v
+        new_state_dict[new_k] = new_v
+
+    model.load_state_dict(new_state_dict)
 
     return model
 

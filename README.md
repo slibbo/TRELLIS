@@ -19,7 +19,9 @@ Please run with the flag `FLASH_ATTENTION_TRITON_AMD_ENABLE` set to `"TRUE"`.
 ```
 export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
 export TORCH_ROCM_AOTRITON_ENABLE_EXPERIMENTAL=1
-python app.py
+export XFORMERS_DISABLED=1
+export SPARSE_BACKEND=torchsparse
+python example.py
 ```
 
 <!-- Features -->

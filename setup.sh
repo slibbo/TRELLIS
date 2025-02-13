@@ -156,14 +156,15 @@ if [ "$XFORMERS" = true ] ; then
         #esac
         # pip install -U xformers --index-url https://download.pytorch.org/whl/rocm6.2.4
         # As this uses flash-attn, try installing that first, which will install the triton backend
-        mkdir -p /tmp/extensions
-        git clone --recurse-submodules https://github.com/facebookresearch/xformers.git /tmp/extensions/xformers
-        cd /tmp/extensions/xformers
-        export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
-        export PYTORCH_ROCM_ARCH=gfx1100
-        export GPU_TARGETS="gfx1100"
-        pip install --verbose .
-        cd $WORKDIR
+        # mkdir -p /tmp/extensions
+        # git clone --recurse-submodules https://github.com/facebookresearch/xformers.git /tmp/extensions/xformers
+        # cd /tmp/extensions/xformers
+        # export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
+        # export PYTORCH_ROCM_ARCH=gfx1100
+        # export GPU_TARGETS="gfx1100"
+        # pip install --verbose .
+        # cd $WORKDIR
+        # Actually neither work, so skip xformers entirely
     else
         echo "[XFORMERS] Unsupported platform: $PLATFORM"
     fi
@@ -282,7 +283,8 @@ if [ "$SPCONV" = true ] ; then
             *) echo "[SPCONV] Unsupported PyTorch CUDA version: $CUDA_MAJOR_VERSION" ;;
         esac
     elif [ "$PLATFORM" = "hip" ] ; then
-        pip install spconv
+        # pip install spconv
+        # Regular spconv maybe has issues with triton flash-attn
     else
         echo "[SPCONV] Unsupported platform: $PLATFORM"
     fi
